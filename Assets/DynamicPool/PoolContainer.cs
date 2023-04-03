@@ -10,11 +10,15 @@ namespace SG.Global
         
         public SubContainer GetSubContainer(int id, string name)
         {
-            _mainContainer ??= new GameObject()
+            if (_mainContainer == null)
             {
-                name = "Pool Container"
-            }.transform;
-
+                _mainContainer = new GameObject()
+                {
+                    name = "Pool Container"
+                }.transform;
+                Object.DontDestroyOnLoad(_mainContainer);
+            }
+            
             if (_subContainers.TryGetValue(id, out var subContainer)) 
                 return subContainer;
             
