@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Pool;
 
-namespace SG.Global
+namespace SG.Global.PoolSystem
 {
     public static class DynamicPool
     {

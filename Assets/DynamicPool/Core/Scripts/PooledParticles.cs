@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace SG.Global
+namespace SG.Global.PoolSystem
 {
     [RequireComponent(typeof(ParticleSystem))]
     public class PooledParticles : MonoBehaviour, IPoolable

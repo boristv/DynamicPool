@@ -1,7 +1,7 @@
 using System;
 using System.Collections;
-using SG.Global;
 using UnityEngine;
+using SG.Global.PoolSystem;
 
 public class TestPoolItem : MonoBehaviour, IPoolable
 {

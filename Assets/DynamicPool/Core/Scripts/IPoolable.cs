@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace SG.Global
+namespace SG.Global.PoolSystem
 {
     public interface IPoolable
     {

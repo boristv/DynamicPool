@@ -1,5 +1,5 @@
-using SG.Global;
 using UnityEngine;
+using SG.Global.PoolSystem;
 
 public class DynamicPoolTester : MonoBehaviour
     {

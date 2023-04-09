@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace SG.Global
+namespace SG.Global.PoolSystem
 {
     public class PoolContainer
     {
