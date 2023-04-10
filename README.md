@@ -5,6 +5,11 @@
 - Doesn't require the creation of additional objects on the scene
 - Simplifies the use of the pool system.
 
+## Installation
+
+- Import unitypackage from releases
+- If examples aren't needed, uncheck the folder "Examples"
+
 ## Instruction
 
 - DynamicPool.Get - use to spawn object
