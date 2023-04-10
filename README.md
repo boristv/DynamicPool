@@ -12,6 +12,8 @@
 
 ## Instruction
 
+Use the static class DynamicPool from namespace SG.GLobal.PoolSystem
+
 - DynamicPool.Get - use to spawn object
 - DynamicPool.CreatePool - use to prespawn objects
 - DynamicPool.Clear - clear pool for one object
