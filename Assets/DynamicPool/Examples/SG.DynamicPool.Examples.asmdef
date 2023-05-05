@@ -1,0 +1,16 @@
+{
+    "name": "SG.DynamicPool.Examples",
+    "rootNamespace": "",
+    "references": [
+        "GUID:3c5d8949709a8c14e98f51df91e1fb4e"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
