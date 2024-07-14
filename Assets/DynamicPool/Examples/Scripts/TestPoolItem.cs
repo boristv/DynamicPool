@@ -5,11 +5,7 @@ using SG.Global.PoolSystem;
 
 public class TestPoolItem : MonoBehaviour, IPoolable
 {
-    public event Action ReturnToPool;
-
     [SerializeField] private float _existTime = 5f;
-
-    public GameObject GameObject => gameObject;
 
     public void OnTakeFromPool()
     {
@@ -24,6 +20,6 @@ public class TestPoolItem : MonoBehaviour, IPoolable
     private IEnumerator ReleaseWithDelay()
     {
         yield return new WaitForSeconds(_existTime);
-        ReturnToPool?.Invoke();
+        DynamicPool.Return(this);
     }
 }

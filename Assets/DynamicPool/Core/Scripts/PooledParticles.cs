@@ -6,14 +6,7 @@ namespace SG.Global.PoolSystem
     [RequireComponent(typeof(ParticleSystem))]
     public class PooledParticles : MonoBehaviour, IPoolable
     {
-        public event Action ReturnToPool;
-        public GameObject GameObject { get; private set; }
         public ParticleSystem ParticleSystem { get; set; }
-
-        private void Awake()
-        {
-            GameObject = gameObject;
-        }
         
         public void OnTakeFromPool()
         {
@@ -24,7 +17,7 @@ namespace SG.Global.PoolSystem
 
         private void OnParticleSystemStopped()
         {
-            ReturnToPool?.Invoke();
+            DynamicPool.Return(this);
         }
 
         public void OnReturnToPool()

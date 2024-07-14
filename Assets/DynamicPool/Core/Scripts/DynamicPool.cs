@@ -8,6 +8,8 @@ namespace SG.Global.PoolSystem
     {
         private static Dictionary<int, ObjectPool<IPoolable>> _objectPools = new();
         
+        private static Dictionary<IPoolable, int> _poolItemPrefabIds = new();
+        
         private static PoolContainer _poolContainer;
         private static PoolContainer PoolContainer => _poolContainer ??= new PoolContainer();
 
@@ -84,16 +86,16 @@ namespace SG.Global.PoolSystem
             UpdateSubContainerName(prefab);
         }
 
-        public static T Get<T>(T prefab, Vector3 position, Transform parent = null) where T : Object, IPoolable
+        public static T Get<T>(T prefab, Vector3 position, Transform parent = null) where T : Component, IPoolable
         {
             var pool = GetPool(prefab);
 
             var poolItem = (T) pool.Get();
 
-            if (parent != null) poolItem.GameObject.transform.SetParent(parent);
-            poolItem.GameObject.transform.position = position;
+            if (parent != null) poolItem.gameObject.transform.SetParent(parent);
+            poolItem.gameObject.transform.position = position;
 
-            ItemGot(prefab, poolItem, pool);
+            UpdateSubContainerName(prefab);
 
             return poolItem;
         }
@@ -104,27 +106,24 @@ namespace SG.Global.PoolSystem
 
             var poolItem = (PooledParticles) pool.Get();
 
-            if (parent != null) poolItem.GameObject.transform.SetParent(parent);
-            poolItem.GameObject.transform.position = position;
+            if (parent != null) poolItem.gameObject.transform.SetParent(parent);
+            poolItem.gameObject.transform.position = position;
 
-            ItemGot(particlesPrefab, poolItem, pool);
+            UpdateSubContainerName(particlesPrefab);
 
             return poolItem.ParticleSystem;
         }
         
-        private static void ItemGot<T>(T prefab, IPoolable poolItem, ObjectPool<IPoolable> pool) where T : Object
+        public static void Return(IPoolable poolItem)
         {
-            poolItem.ReturnToPool -= ReturnToPool;
-            poolItem.ReturnToPool += ReturnToPool;
-
-            void ReturnToPool()
+            if (_poolItemPrefabIds.TryGetValue(poolItem, out var prefabId))
             {
-                poolItem.ReturnToPool -= ReturnToPool;
-                pool.Release(poolItem);
-                UpdateSubContainerName(prefab);
+                if (_objectPools.TryGetValue(prefabId, out var pool))
+                {
+                    pool.Release(poolItem);
+                    UpdateSubContainerName(prefabId);
+                }
             }
-
-            UpdateSubContainerName(prefab);
         }
 
         private static void Clear(int id)
@@ -165,6 +164,7 @@ namespace SG.Global.PoolSystem
             var subContainer = GetSubContainer(prefab);
 
             var poolItem = Object.Instantiate(prefab, subContainer.Transform);
+            _poolItemPrefabIds[poolItem] = GetID(prefab);
 
             UpdateSubContainerName(prefab);
 
@@ -177,6 +177,7 @@ namespace SG.Global.PoolSystem
 
             var pooledParticles = Object.Instantiate(particlesPrefab, subContainer.Transform);
             var poolItem = pooledParticles.gameObject.AddComponent<PooledParticles>();
+            _poolItemPrefabIds[poolItem] = GetID(particlesPrefab);
             poolItem.ParticleSystem = pooledParticles;
 
             UpdateSubContainerName(particlesPrefab);
@@ -186,20 +187,31 @@ namespace SG.Global.PoolSystem
 
         private static void OnReturnedToPool<T>(T prefab, IPoolable poolItem) where T : Object
         {
-            poolItem.GameObject.SetActive(false);
-            poolItem.GameObject.transform.SetParent(GetSubContainer(prefab).Transform);
+            if (poolItem is Component poolItemComponent)
+            {
+                poolItemComponent.gameObject.SetActive(false);
+                poolItemComponent.gameObject.transform.SetParent(GetSubContainer(prefab).Transform);
+            }
             poolItem.OnReturnToPool();
         }
 
         private static void OnTakeFromPool(IPoolable poolItem)
         {
-            poolItem.GameObject.SetActive(true);
+            if (poolItem is Component poolItemComponent)
+            {
+                poolItemComponent.gameObject.SetActive(true);
+            }
             poolItem.OnTakeFromPool();
         }
 
         private static void OnDestroyPoolObject<T>(T prefab, IPoolable poolItem) where T : Object
         {
-            Object.Destroy(poolItem.GameObject);
+            _poolItemPrefabIds.Remove(poolItem);
+            if (poolItem is Component poolItemComponent)
+            {
+                Object.Destroy(poolItemComponent.gameObject);
+            }
+
             UpdateSubContainerName(prefab);
         }
 
@@ -207,6 +219,13 @@ namespace SG.Global.PoolSystem
         {
 #if UNITY_EDITOR
             var id = GetID(prefab);
+            UpdateSubContainerName(id);
+#endif
+        }
+        
+        private static void UpdateSubContainerName(int id)
+        {
+#if UNITY_EDITOR
             if (_objectPools.TryGetValue(id, out var pool))
             {
                 PoolContainer.UpdateSubContainerName(id, pool.CountInactive, pool.CountAll);
