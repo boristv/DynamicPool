@@ -15,6 +15,7 @@
 Use the static class DynamicPool from namespace SG.GLobal.PoolSystem
 
 - DynamicPool.Get - use to spawn object
+- DynamicPool.Return - use to release object
 - DynamicPool.CreatePool - use to prespawn objects
 - DynamicPool.Clear - clear pool for one object
 - DynamicPool.ClearAll - clear pool for all objects
@@ -26,8 +27,6 @@ Then the necessary component will be added automatically and ParticleSystem will
 
 ### IPoolable
 
-- ReturnToPool - invoke this event to return object to pool
-- GameObject - return gameObject or cached gameObject
 - OnTakeFromPool - this method called when object was took from pool
 - OnReturnToPool - this method called when object was returned to pool
 
